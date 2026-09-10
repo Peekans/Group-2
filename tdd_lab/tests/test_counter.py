@@ -29,3 +29,11 @@ class TestCounterEndpoints:
         result = client.post('/counters/foo')
         assert result.status_code == status.HTTP_201_CREATED
 
+    @pytest.mark.parametrize("name, expected_status", [
+        ("foo", status.HTTP_200_OK), ("bar", status.HTTP_404_NOT_FOUND)
+        ])
+
+    def test_get_counter(self, client, name, expected_status):
+        """Should get a counter"""
+        result = client.get(f'/counters/{name}')
+        assert result.status_code == expected_status
