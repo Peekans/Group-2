@@ -29,3 +29,17 @@ class TestCounterEndpoints:
         result = client.post('/counters/foo')
         assert result.status_code == status.HTTP_201_CREATED
 
+    def test_list_counters(self, client):
+        """It should list all counters and their values"""
+        client.post('/counters/test1')
+        client.post('/counters/test2')
+
+        result = client.get('/counters')
+        assert result.status_code == status.HTTP_200_OK
+
+        # Other tests share the COUNTERS dict, so assert on the counters
+        # this test created rather than on the whole response.
+        data = result.get_json()
+        assert data['test1'] == 0
+        assert data['test2'] == 0
+

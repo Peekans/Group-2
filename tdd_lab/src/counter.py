@@ -19,3 +19,8 @@ def create_counter(name):
         return jsonify({"error": f"Counter {name} already exists"}), status.HTTP_409_CONFLICT
     COUNTERS[name] = 0
     return jsonify({name: COUNTERS[name]}), status.HTTP_201_CREATED
+
+@app.route('/counters', methods=['GET'])
+def list_counters():
+    """List all counters"""
+    return jsonify(COUNTERS), status.HTTP_200_OK
