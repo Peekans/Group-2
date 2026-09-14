@@ -78,6 +78,28 @@ def test_invalid_role_assignment():
     with pytest.raises(DataValidationError):
         account.change_role("moderator")  # Invalid role should raise an error
 
+# ===========================
+# Test: Password Hashing
+# Author: Michael Podolsky
+# Date: 2026-09-09
+# Description: Ensure passwords are properly hashed and that password verification works correctly.
+# ===========================
+
+def test_password_hashing():
+    """Test that passwords are hashed and verified correctly"""
+    account = Account(name="Michael Podolsky", email="podolm1@unlv.nevada.edu")
+    password = "secret-password"
+
+    account.set_password(password)
+
+    # The password is stored as a hash, not as plaintext
+    assert account.password_hash is not None
+    assert account.password_hash != password
+
+    # Verification succeeds for the correct password only
+    assert account.check_password(password) is True
+    assert account.check_password("wrong-password") is False
+
 
 ######################################################################
 #  T O D O   T E S T S  (To Be Completed by Students)
@@ -126,7 +148,7 @@ Each test should include:
 # - Ensure withdrawal fails when balance is insufficient.
 # Target Method: withdraw()
 
-# Student 8: Test password hashing
+# Student 8: Test password hashing -- DONE (Michael Podolsky)
 # - Ensure passwords are properly hashed.
 # - Verify that password verification works correctly.
 # Target Methods: set_password() / check_password()

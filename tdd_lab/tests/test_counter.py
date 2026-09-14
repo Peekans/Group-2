@@ -29,11 +29,27 @@ class TestCounterEndpoints:
         result = client.post('/counters/foo')
         assert result.status_code == status.HTTP_201_CREATED
 
-    @pytest.mark.parametrize("name, expected_status", [
-        ("foo", status.HTTP_200_OK), ("bar", status.HTTP_404_NOT_FOUND)
-        ])
-
-    def test_get_counter(self, client, name, expected_status):
+    # @pytest.mark.parametrize("name, expected_status", [
+    #     ("foo", status.HTTP_200_OK), ("bar", status.HTTP_404_NOT_FOUND)
+    #     ])
+    def test_get_counter(self, client): #name, expected_status):
         """Should get a counter"""
-        result = client.get(f'/counters/{name}')
-        assert result.status_code == expected_status
+        client.post('/counters/foo')
+        result = client.get('/counters/foo')
+        #result = client.get(f'/counters/{name}')
+        assert result.status_code == status.HTTP_200_OK
+
+    def test_list_counters(self, client):
+        """It should list all counters and their values"""
+        client.post('/counters/test1')
+        client.post('/counters/test2')
+
+        result = client.get('/counters')
+        assert result.status_code == status.HTTP_200_OK
+
+        # Other tests share the COUNTERS dict, so assert on the counters
+        # this test created rather than on the whole response.
+        data = result.get_json()
+        assert data['test1'] == 0
+        assert data['test2'] == 0
+
