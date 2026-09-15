@@ -78,6 +78,13 @@ def test_invalid_role_assignment():
     with pytest.raises(DataValidationError):
         account.change_role("moderator")  # Invalid role should raise an error
 
+# ===========================
+# Test: Account Serialization
+# Author: Glen Testamark
+# Date: 2026-09-14
+# Description: Ensure accounts are serialized properly to a dictionary and fields match expected keys.
+# ===========================
+
 def test_to_dict(setup_account):
     acct_dict = setup_account.to_dict()
     expected_keys = {
@@ -95,6 +102,24 @@ def test_to_dict(setup_account):
     assert isinstance(acct_dict, dict)
     assert expected_keys == acct_dict.keys()
     assert {"id", "name", "email", "foo", "disabled"} != acct_dict.keys()
+
+# ===========================
+# Test: Account Missing Required Fields
+# Author: Glen Testamark
+# Date: 2026-09-14
+# Description: Ensure accounts contain the required name and email fields by
+# testing for DataValidationError on accounts without the required fields set.
+# ===========================
+
+def test_required_fields():
+    # Test default parameter, name only, and email only accounts.
+    with pytest.raises(DataValidationError):
+        Account().validate_required_fields()
+    with pytest.raises(DataValidationError):
+        Account(name="foo") .validate_required_fields()
+    with pytest.raises(DataValidationError):
+        Account(email="bar@bar.binks").validate_required_fields()
+
 
 # ===========================
 # Test: Password Hashing
@@ -144,7 +169,7 @@ Each test should include:
 # - Ensure invalid email formats raise a validation error.
 # Target Method: validate_email()
 
-# Student 3: Test missing required fields
+# Student 3: Test missing required fields -- DONE (Glen Testamark)
 # - Ensure a DataValidationError is raised when name or email is missing.
 # - Note: SQLAlchemy does not validate on construction, so Account() itself
 #   never raises. Call the validation method on the constructed object.
