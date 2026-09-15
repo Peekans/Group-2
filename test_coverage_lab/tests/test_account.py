@@ -78,6 +78,24 @@ def test_invalid_role_assignment():
     with pytest.raises(DataValidationError):
         account.change_role("moderator")  # Invalid role should raise an error
 
+def test_to_dict(setup_account):
+    acct_dict = setup_account.to_dict()
+    expected_keys = {
+            "id",
+            "name",
+            "email",
+            "phone_number",
+            "disabled",
+            "date_joined",
+            "balance",
+            "role"
+    }
+    # Ensure acct_dict is a dict and the keys match and that test fails
+    # for an arbitrary incorrect set of keys 
+    assert isinstance(acct_dict, dict)
+    assert expected_keys == acct_dict.keys()
+    assert {"id", "name", "email", "foo", "disabled"} != acct_dict.keys()
+
 # ===========================
 # Test: Password Hashing
 # Author: Michael Podolsky
@@ -117,7 +135,7 @@ Each test should include:
 
 # Test Assignments
 
-# Student 1: Test account serialization
+# Student 1: Test account serialization -- DONE (Glen Testamark)
 # - Verify that the account object is correctly serialized to a dictionary.
 # - Ensure all expected fields are included in the output.
 # Target Method: to_dict()
