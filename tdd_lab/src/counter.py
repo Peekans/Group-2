@@ -24,3 +24,10 @@ def create_counter(name):
 def list_counters():
     """List all counters"""
     return jsonify(COUNTERS), status.HTTP_200_OK
+
+@app.route('/counters/reset', methods=['POST'])
+def reset_all_counters():
+    """Reset all counters to zero"""
+    for name in COUNTERS:
+        COUNTERS[name] = 0
+    return jsonify({"message": "All counters reset"}), status.HTTP_200_OK
