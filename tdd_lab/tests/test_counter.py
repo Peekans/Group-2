@@ -28,16 +28,14 @@ class TestCounterEndpoints:
         """It should create a counter"""
         result = client.post('/counters/foo')
         assert result.status_code == status.HTTP_201_CREATED
+   
+    def test_delete_counter(self, client):
+        client.post('/counters/deltest')
+        assert 'deltest' in client.get('/counters').get_json()
 
-    # @pytest.mark.parametrize("name, expected_status", [
-    #     ("foo", status.HTTP_200_OK), ("bar", status.HTTP_404_NOT_FOUND)
-    #     ])
-    def test_get_counter(self, client): #name, expected_status):
-        """Should get a counter"""
-        client.post('/counters/foo')
-        result = client.get('/counters/foo')
-        #result = client.get(f'/counters/{name}')
-        assert result.status_code == status.HTTP_200_OK
+        result = client.delete('/counters/deltest')
+        assert result.status_code == status.HTTP_204_NO_CONTENT
+        assert 'deltest' not in client.get('/counters').get_json()
 
     def test_list_counters(self, client):
         """It should list all counters and their values"""
