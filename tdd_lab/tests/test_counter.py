@@ -11,6 +11,8 @@ how to call the web service and assert what it should return.
 - The service must be able to read the counter
 """
 
+from http import HTTPStatus
+
 import pytest
 from src import app
 from src import status
@@ -29,6 +31,17 @@ class TestCounterEndpoints:
         result = client.post('/counters/foo')
         assert result.status_code == status.HTTP_201_CREATED
 
+    def test_reject_invalid_counter_name(self, client):
+        """It should reject a non-alphanumeric counter name"""
+        invalid_name = 'invalid-name'
+
+        result = client.post(f'/counters/{invalid_name}')
+
+        assert result.status_code == HTTPStatus.BAD_REQUEST
+        assert result.get_json() == {
+            'error': f'Invalid counter name: {invalid_name}'
+        }
+
     def test_list_counters(self, client):
         """It should list all counters and their values"""
         client.post('/counters/test1')
@@ -42,4 +55,3 @@ class TestCounterEndpoints:
         data = result.get_json()
         assert data['test1'] == 0
         assert data['test2'] == 0
-
