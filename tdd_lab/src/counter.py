@@ -15,6 +15,10 @@ def counter_exists(name):
 @app.route('/counters/<name>', methods=['POST'])
 def create_counter(name):
     """Create a counter"""
+    if not name.isalnum():
+        return jsonify(
+            {"error": f"Invalid counter name: {name}"}
+        ), status.HTTP_400_BAD_REQUEST
     if counter_exists(name):
         return jsonify({"error": f"Counter {name} already exists"}), status.HTTP_409_CONFLICT
     COUNTERS[name] = 0
