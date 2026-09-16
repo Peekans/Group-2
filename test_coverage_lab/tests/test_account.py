@@ -136,6 +136,26 @@ def test_valid_withdrawal(setup_account):
         starting_balance - withdrawal_amount
     )
 
+# ===========================
+# Test: Positive Account Deposit
+# Author: Ethan Guillem
+# Date: 2026-09-15
+# Description: Ensure a positive deposit increases the balance correctly.
+# ===========================
+
+def test_positive_deposit():
+    """Test that depositing a positive amount increases the balance."""
+    account = Account(
+        name="Ethan Guillem",
+        email="ethan@example.com",
+        balance=100.00,
+    )
+
+    account.deposit(50.00)
+
+    assert account.balance == 150.00
+
+
 ######################################################################
 #  T O D O   T E S T S  (To Be Completed by Students)
 ######################################################################
@@ -167,7 +187,7 @@ Each test should include:
 #   never raises. Call the validation method on the constructed object.
 # Target Method: validate_required_fields()
 
-# Student 4: Test positive deposit
+# Student 4: Test positive deposit -- DONE (Ethan Guillem)
 # - Verify that depositing a positive amount correctly increases the balance.
 # Target Method: deposit()
 
