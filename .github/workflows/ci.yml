@@ -19,6 +19,14 @@ jobs:
         with:
           python-version: "3.9"  # Ensure consistency in Python version
 
+      - name: Cache Python Dependencies
+        uses: actions/cache@v99
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('ci_lab/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
