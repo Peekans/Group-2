@@ -23,8 +23,7 @@ def create_counter(name):
 @app.route('/counters/<name>', methods=['DELETE'])
 def delete_counter(name: str):
     """ Delete a counter from COUNTERS """
-    cvalue = COUNTERS.pop(name)
-    return jsonify({"Success": f"Counter {name}: {cvalue} deleted"}), status.HTTP_204_NO_CONTENT
+    return jsonify({"Success": f"Counter {name}: {COUNTERS.pop(name)} deleted"}), status.HTTP_204_NO_CONTENT
 
 
 @app.route('/counters', methods=['GET'])
