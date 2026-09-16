@@ -85,8 +85,8 @@ def test_invalid_role_assignment():
 # Description: Ensure accounts are serialized properly to a dictionary and fields match expected keys.
 # ===========================
 
-def test_to_dict(setup_account):
-    acct_dict = setup_account.to_dict()
+def test_to_dict():
+    acct_dict = Account(name="Nas Jones", email="nas@ill.matic").to_dict()
     expected_keys = {
             "id",
             "name",
@@ -101,7 +101,7 @@ def test_to_dict(setup_account):
     # for an arbitrary incorrect set of keys 
     assert isinstance(acct_dict, dict)
     assert expected_keys == acct_dict.keys()
-    assert {"id", "name", "email", "foo", "disabled"} != acct_dict.keys()
+    assert {'id': 10, 'email': 'gnx@mail.org'}.keys() != expected_keys
 
 # ===========================
 # Test: Account Missing Required Fields
