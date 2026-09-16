@@ -117,6 +117,24 @@ def test_account_deactivation_and_reactivation(setup_account):
     setup_account.reactivate()
     assert setup_account.disabled is False
 
+# ===========================
+# Test: Valid Account Withdrawal
+# Author: Sokrat Rostomyan
+# Date: 2026-09-15
+# Description: Ensure a valid withdrawal decreases the account balance.
+# ===========================
+
+def test_valid_withdrawal(setup_account):
+    """Test withdrawing a valid amount from an account."""
+    starting_balance = 100.0
+    withdrawal_amount = 30.0
+    setup_account.balance = starting_balance
+
+    setup_account.withdraw(withdrawal_amount)
+
+    assert setup_account.balance == pytest.approx(
+        starting_balance - withdrawal_amount
+    )
 
 ######################################################################
 #  T O D O   T E S T S  (To Be Completed by Students)
