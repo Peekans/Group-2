@@ -136,6 +136,26 @@ def test_valid_withdrawal(setup_account):
         starting_balance - withdrawal_amount
     )
 
+# ===========================
+# Test: Invalid Email Input
+# Author: Peter Nguyen
+# Date: 2026-09-16
+# Description: Ensure invalid email formats raise a DataValidationError.
+# ===========================
+
+def test_invalid_email_input():
+    """Test that invalid email formats are rejected"""""
+    invalid_emails = {
+        "fakeemail"
+        "noatsign.com"
+        "wheredomain@"
+        "has spaces.com"
+    }
+    for bad_email in invalid_emails:
+        account = Account(name="Test User", email=bad_email)
+        with pytest.raises(DataValidationError):
+            account.validate_email()
+
 ######################################################################
 #  T O D O   T E S T S  (To Be Completed by Students)
 ######################################################################
