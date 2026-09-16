@@ -12,10 +12,14 @@ def counter_exists(name):
     """Check if counter exists"""
     return name in COUNTERS
 
+def is_valid_counter_name(name):
+    """Check whether a counter name is alphanumeric"""
+    return name.isalnum()
+
 @app.route('/counters/<name>', methods=['POST'])
 def create_counter(name):
     """Create a counter"""
-    if not name.isalnum():
+    if not is_valid_counter_name(name):
         return jsonify(
             {"error": f"Invalid counter name: {name}"}
         ), status.HTTP_400_BAD_REQUEST
