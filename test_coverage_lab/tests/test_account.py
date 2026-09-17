@@ -231,6 +231,7 @@ Each test should include:
 # ===========================
 
 def test_withdraw_insuff_funds():
+    """Test withdrawing more than the balance to raise DataValidationError and ensure balance is left unchanged."""
     # Creating sample account
     account = Account(name="Astrid Jimenez", email="jimena29@unv.nevada.edu", balance=50.0)
 
