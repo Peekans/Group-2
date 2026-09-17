@@ -103,7 +103,6 @@ def test_to_dict():
     assert isinstance(acct_dict, dict)
     assert expected_keys == acct_dict.keys()
     assert acct_dict["name"] == acct.name and acct_dict["email"] == acct.email
-    assert {'id': 10, 'email': 'gnx@mail.org'}.keys() != acct_dict.keys()
 
 # ===========================
 # Test: Account Missing Required Fields
