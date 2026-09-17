@@ -79,6 +79,50 @@ def test_invalid_role_assignment():
         account.change_role("moderator")  # Invalid role should raise an error
 
 # ===========================
+# Test: Account Serialization
+# Author: Glen Testamark
+# Date: 2026-09-14
+# Description: Ensure accounts are serialized properly to a dictionary and fields match expected keys.
+# ===========================
+
+def test_to_dict():
+    acct = Account(name="Nas Jones", email="nas@ill.matic")
+    acct_dict = acct.to_dict()
+    expected_keys = {
+            "id",
+            "name",
+            "email",
+            "phone_number",
+            "disabled",
+            "date_joined",
+            "balance",
+            "role"
+    }
+    # Ensure acct_dict is a dict and the keys match and that test fails
+    # for an arbitrary incorrect set of keys 
+    assert isinstance(acct_dict, dict)
+    assert expected_keys == acct_dict.keys()
+    assert acct_dict["name"] == acct.name and acct_dict["email"] == acct.email
+
+# ===========================
+# Test: Account Missing Required Fields
+# Author: Glen Testamark
+# Date: 2026-09-14
+# Description: Ensure accounts contain the required name and email fields by
+# testing for DataValidationError on accounts without the required fields set.
+# ===========================
+
+def test_required_fields():
+    # Test default parameter, name only, and email only accounts.
+    with pytest.raises(DataValidationError):
+        Account().validate_required_fields()
+    with pytest.raises(DataValidationError):
+        Account(name="foo").validate_required_fields()
+    with pytest.raises(DataValidationError):
+        Account(email="bar@bar.binks").validate_required_fields()
+
+
+# ===========================
 # Test: Password Hashing
 # Author: Michael Podolsky
 # Date: 2026-09-09
@@ -100,6 +144,41 @@ def test_password_hashing():
     assert account.check_password(password) is True
     assert account.check_password("wrong-password") is False
 
+# ===========================
+# Test: Account Deactivation and Reactivation
+# Author: Russell Kennedy
+# Date: 2026-09-14
+# Description: Ensure an active account can be deactivated and reactivated.
+# ===========================
+
+def test_account_deactivation_and_reactivation(setup_account):
+    """Test deactivating and reactivating an account."""
+    assert setup_account.disabled is False
+
+    setup_account.deactivate()
+    assert setup_account.disabled is True
+
+    setup_account.reactivate()
+    assert setup_account.disabled is False
+
+# ===========================
+# Test: Valid Account Withdrawal
+# Author: Sokrat Rostomyan
+# Date: 2026-09-15
+# Description: Ensure a valid withdrawal decreases the account balance.
+# ===========================
+
+def test_valid_withdrawal(setup_account):
+    """Test withdrawing a valid amount from an account."""
+    starting_balance = 100.0
+    withdrawal_amount = 30.0
+    setup_account.balance = starting_balance
+
+    setup_account.withdraw(withdrawal_amount)
+
+    assert setup_account.balance == pytest.approx(
+        starting_balance - withdrawal_amount
+    )
 
 ######################################################################
 #  T O D O   T E S T S  (To Be Completed by Students)
@@ -117,7 +196,7 @@ Each test should include:
 
 # Test Assignments
 
-# Student 1: Test account serialization
+# Student 1: Test account serialization -- DONE (Glen Testamark)
 # - Verify that the account object is correctly serialized to a dictionary.
 # - Ensure all expected fields are included in the output.
 # Target Method: to_dict()
@@ -126,7 +205,7 @@ Each test should include:
 # - Ensure invalid email formats raise a validation error.
 # Target Method: validate_email()
 
-# Student 3: Test missing required fields
+# Student 3: Test missing required fields -- DONE (Glen Testamark)
 # - Ensure a DataValidationError is raised when name or email is missing.
 # - Note: SQLAlchemy does not validate on construction, so Account() itself
 #   never raises. Call the validation method on the constructed object.
