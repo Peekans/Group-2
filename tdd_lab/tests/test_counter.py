@@ -16,6 +16,7 @@ from http import HTTPStatus
 import pytest
 from src import app
 from src import status
+from src.counter import COUNTERS
 
 @pytest.fixture()
 def client():
@@ -30,6 +31,14 @@ class TestCounterEndpoints:
         """It should create a counter"""
         result = client.post('/counters/foo')
         assert result.status_code == status.HTTP_201_CREATED
+
+    def test_delete_counter(self, client):
+        client.post('/counters/deltest')
+        assert 'deltest' in client.get('/counters').get_json()
+
+        result = client.delete('/counters/deltest')
+        assert result.status_code == status.HTTP_204_NO_CONTENT
+        assert 'deltest' not in client.get('/counters').get_json()
 
     def test_reject_invalid_counter_name(self, client):
         """It should reject a non-alphanumeric counter name"""
@@ -55,3 +64,34 @@ class TestCounterEndpoints:
         data = result.get_json()
         assert data['test1'] == 0
         assert data['test2'] == 0
+
+    def test_retrieve_existing_counter(self, client):
+        """It should retrieve an existing counter by name"""
+        counter_name = "retrievable"
+        create_result = client.post(f'/counters/{counter_name}')
+        assert create_result.status_code == status.HTTP_201_CREATED
+
+        result = client.get(f'/counters/{counter_name}')
+
+        assert result.status_code == status.HTTP_200_OK
+        assert result.get_json() == {counter_name: 0}
+
+    # ===========================
+    # Test: Reset All Counters
+    # Author: Russell Kennedy
+    # Date: 2026-09-14
+    # Description: Ensure every existing counter is reset to zero.
+    # ===========================
+    def test_reset_all_counters(self, client):
+        """It should reset every existing counter to zero."""
+        COUNTERS.clear()
+        client.post('/counters/alpha')
+        client.post('/counters/beta')
+        COUNTERS['alpha'] = 3
+        COUNTERS['beta'] = 7
+
+        result = client.post('/counters/reset')
+
+        assert result.status_code == status.HTTP_200_OK
+        assert result.get_json() == {'message': 'All counters reset'}
+        assert COUNTERS == {'alpha': 0, 'beta': 0}
