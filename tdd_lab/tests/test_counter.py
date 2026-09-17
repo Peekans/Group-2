@@ -44,6 +44,17 @@ class TestCounterEndpoints:
         assert data['test1'] == 0
         assert data['test2'] == 0
 
+    def test_retrieve_existing_counter(self, client):
+        """It should retrieve an existing counter by name"""
+        counter_name = "retrievable"
+        create_result = client.post(f'/counters/{counter_name}')
+        assert create_result.status_code == status.HTTP_201_CREATED
+
+        result = client.get(f'/counters/{counter_name}')
+
+        assert result.status_code == status.HTTP_200_OK
+        assert result.get_json() == {counter_name: 0}
+
     # ===========================
     # Test: Reset All Counters
     # Author: Russell Kennedy

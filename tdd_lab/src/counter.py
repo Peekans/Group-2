@@ -25,6 +25,11 @@ def create_counter(name):
     COUNTERS[name] = 0
     return jsonify({name: COUNTERS[name]}), status.HTTP_201_CREATED
 
+@app.route('/counters/<name>', methods=['GET'])
+def get_counter(name):
+    """Retrieve an existing counter"""
+    return jsonify({name: COUNTERS[name]}), status.HTTP_200_OK
+
 @app.route('/counters', methods=['GET'])
 def list_counters():
     """List all counters"""

@@ -100,6 +100,41 @@ def test_password_hashing():
     assert account.check_password(password) is True
     assert account.check_password("wrong-password") is False
 
+# ===========================
+# Test: Account Deactivation and Reactivation
+# Author: Russell Kennedy
+# Date: 2026-09-14
+# Description: Ensure an active account can be deactivated and reactivated.
+# ===========================
+
+def test_account_deactivation_and_reactivation(setup_account):
+    """Test deactivating and reactivating an account."""
+    assert setup_account.disabled is False
+
+    setup_account.deactivate()
+    assert setup_account.disabled is True
+
+    setup_account.reactivate()
+    assert setup_account.disabled is False
+
+# ===========================
+# Test: Valid Account Withdrawal
+# Author: Sokrat Rostomyan
+# Date: 2026-09-15
+# Description: Ensure a valid withdrawal decreases the account balance.
+# ===========================
+
+def test_valid_withdrawal(setup_account):
+    """Test withdrawing a valid amount from an account."""
+    starting_balance = 100.0
+    withdrawal_amount = 30.0
+    setup_account.balance = starting_balance
+
+    setup_account.withdraw(withdrawal_amount)
+
+    assert setup_account.balance == pytest.approx(
+        starting_balance - withdrawal_amount
+    )
 
 ######################################################################
 #  T O D O   T E S T S  (To Be Completed by Students)
