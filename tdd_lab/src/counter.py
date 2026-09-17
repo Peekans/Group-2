@@ -25,6 +25,10 @@ def delete_counter(name: str):
     """ Delete a counter from COUNTERS """
     return jsonify({"Success": f"Counter {name}: {COUNTERS.pop(name)} deleted"}), status.HTTP_204_NO_CONTENT
 
+@app.route('/counters/<name>', methods=['GET'])
+def get_counter(name):
+    """Retrieve an existing counter"""
+    return jsonify({name: COUNTERS[name]}), status.HTTP_200_OK
 
 @app.route('/counters', methods=['GET'])
 def list_counters():
