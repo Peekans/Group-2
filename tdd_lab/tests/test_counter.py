@@ -29,6 +29,14 @@ class TestCounterEndpoints:
         """It should create a counter"""
         result = client.post('/counters/foo')
         assert result.status_code == status.HTTP_201_CREATED
+   
+    def test_delete_counter(self, client):
+        client.post('/counters/deltest')
+        assert 'deltest' in client.get('/counters').get_json()
+
+        result = client.delete('/counters/deltest')
+        assert result.status_code == status.HTTP_204_NO_CONTENT
+        assert 'deltest' not in client.get('/counters').get_json()
 
     def test_list_counters(self, client):
         """It should list all counters and their values"""
