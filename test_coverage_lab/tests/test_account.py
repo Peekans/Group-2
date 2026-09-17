@@ -86,7 +86,8 @@ def test_invalid_role_assignment():
 # ===========================
 
 def test_to_dict():
-    acct_dict = Account(name="Nas Jones", email="nas@ill.matic").to_dict()
+    acct = Account(name="Nas Jones", email="nas@ill.matic")
+    acct_dict = acct.to_dict()
     expected_keys = {
             "id",
             "name",
@@ -101,7 +102,8 @@ def test_to_dict():
     # for an arbitrary incorrect set of keys 
     assert isinstance(acct_dict, dict)
     assert expected_keys == acct_dict.keys()
-    assert {'id': 10, 'email': 'gnx@mail.org'}.keys() != expected_keys
+    assert acct_dict["name"] == acct.name and acct_dict["email"] == acct.email
+    assert {'id': 10, 'email': 'gnx@mail.org'}.keys() != acct_dict.keys()
 
 # ===========================
 # Test: Account Missing Required Fields
@@ -116,7 +118,7 @@ def test_required_fields():
     with pytest.raises(DataValidationError):
         Account().validate_required_fields()
     with pytest.raises(DataValidationError):
-        Account(name="foo") .validate_required_fields()
+        Account(name="foo").validate_required_fields()
     with pytest.raises(DataValidationError):
         Account(email="bar@bar.binks").validate_required_fields()
 
