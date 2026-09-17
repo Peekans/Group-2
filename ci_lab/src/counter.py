@@ -128,27 +128,4 @@ def get_counters_less_than_threshold(threshold):
     """Get all counters with values less than the given threshold"""
     filtered_counters = {k: v for k, v in COUNTERS.items() if v < threshold}  # Only keep valid ones
     return jsonify(filtered_counters), status.HTTP_200_OK
-
-def unused_coverage_metric(var):
-    """Unused helper to demonstrate the coverage gate"""
-    total = 0
-    count = 0
-    for i in var:
-        total += i
-        count += 1
-    if count == 0:
-        return 0
-
-    average = total / count
-    if average > 100:
-        return "Excellent coverage: passes test"
-    elif average > 79:
-        return "Good coverage: passes test"
-    elif average > 50:
-        return "Fair coverage: needs more coverage"    
-    elif average > 25:
-        return "Low coverage: needs more coverage"
-    elif average > 0:
-        return "Poor coverage: needs more coverage"
-    else:
-        return "No coverage reported. Add test cases."
+    
