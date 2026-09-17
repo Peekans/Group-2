@@ -14,6 +14,7 @@ how to call the web service and assert what it should return.
 import pytest
 from src import app
 from src import status
+from src.counter import COUNTERS
 
 @pytest.fixture()
 def client():
@@ -53,3 +54,23 @@ class TestCounterEndpoints:
 
         assert result.status_code == status.HTTP_200_OK
         assert result.get_json() == {counter_name: 0}
+
+    # ===========================
+    # Test: Reset All Counters
+    # Author: Russell Kennedy
+    # Date: 2026-09-14
+    # Description: Ensure every existing counter is reset to zero.
+    # ===========================
+    def test_reset_all_counters(self, client):
+        """It should reset every existing counter to zero."""
+        COUNTERS.clear()
+        client.post('/counters/alpha')
+        client.post('/counters/beta')
+        COUNTERS['alpha'] = 3
+        COUNTERS['beta'] = 7
+
+        result = client.post('/counters/reset')
+
+        assert result.status_code == status.HTTP_200_OK
+        assert result.get_json() == {'message': 'All counters reset'}
+        assert COUNTERS == {'alpha': 0, 'beta': 0}
