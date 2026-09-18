@@ -200,6 +200,25 @@ def test_positive_deposit():
     assert account.balance == 150.00
 
 
+# ===========================
+# Test: Deleting an account
+# Author: Jonathan Johnson
+# Date: 2026-09-18
+# Description: Ensure an account can be successfull deleted from database. 
+# ===========================
+
+def test_delete_account(setup_account):
+    """Test that an account can be successfully deleted from database."""
+    account = setup_account
+    email = account.email
+    
+    account.delete()
+    
+    deleted = Account.query.filter_by(email=email).first()
+    assert deleted is None
+    
+
+
 ######################################################################
 #  T O D O   T E S T S  (To Be Completed by Students)
 ######################################################################
@@ -276,6 +295,6 @@ def test_withdraw_insuff_funds():
 # - Ensure duplicate emails are not allowed.
 # Target Method: validate_unique_email()
 
-# Student 11: Test deleting an account
+# Student 11: Test deleting an account -- DONE (Jonathan Johnson)
 # - Verify that an account can be successfully deleted from the database.
 # Target Method: delete()
