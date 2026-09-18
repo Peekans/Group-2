@@ -146,10 +146,10 @@ def test_valid_withdrawal(setup_account):
 def test_invalid_email_input():
     """Test that invalid email formats are rejected"""""
     invalid_emails = {
-        "fakeemail"
-        "noatsign.com"
-        "wheredomain@"
-        "has spaces.com"
+        "fakeemail",
+        "noatsign.com",
+        "wheredomain@",
+        "has spaces.com",
     }
     for bad_email in invalid_emails:
         account = Account(name="Test User", email=bad_email)
