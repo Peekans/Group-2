@@ -65,6 +65,19 @@ class TestCounterEndpoints:
         assert data['test1'] == 0
         assert data['test2'] == 0
 
+    def test_increment_counter(self, client):
+        """It should increment an existing counter's value"""
+        # Starting point: creating a counter starting at 0
+        client.post('/counters/inc')
+
+        # Implementation via PUT
+        result = client.put('/counters/inc')
+
+        # Assert: request success and value increased
+        assert result.status_code == status.HTTP_200_OK
+        data = result.get_json()
+        assert data['inc'] == 1
+
     def test_retrieve_existing_counter(self, client):
         """It should retrieve an existing counter by name"""
         counter_name = "retrievable"

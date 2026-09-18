@@ -49,6 +49,12 @@ def list_counters():
     """List all counters"""
     return jsonify(COUNTERS), status.HTTP_200_OK
 
+@app.route('/counters/<name>', methods=['PUT'])
+def increment_counter(name):
+    """Increment an existing counter"""
+    COUNTERS[name] += 1
+    return jsonify({name: COUNTERS[name]}), status.HTTP_200_OK
+
 @app.route('/counters/reset', methods=['POST'])
 def reset_all_counters():
     """Reset all counters to zero"""
