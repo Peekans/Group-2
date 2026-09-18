@@ -1,23 +1,70 @@
-name: CI Workflow  # Name of the workflow
+name: CI Workflow
 
 on:
   push:
   pull_request:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ci_lab  # Set the default working directory for all steps
+        working-directory: ci_lab
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
       - name: Set Up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.9"  # Ensure consistency in Python version
+          python-version: "3.9"
+
+      - name: Cache Python Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('ci_lab/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install flake8
+
+      - name: Run Flake8 Linting
+        run: flake8 src --count --select=E9,F63,F7,F82 --show-source --statistics
+
+  test:
+    name: Test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+    defaults:
+      run:
+        working-directory: ci_lab
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Cache Python Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('ci_lab/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Install Dependencies
         run: |
@@ -25,10 +72,43 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Tests with Pytest
-        run: pytest --cov=src --cov-report=term-missing
+        run: pytest --no-cov
 
-      - name: Install Flake8
-        run: pip install flake8
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ci_lab
 
-      - name: Run Flake8 Linting
-        run: flake8 src --count --select=E9,F63,F7,F82 --show-source --statistics
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Cache Python Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('ci_lab/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Tests with Coverage
+        run: pytest --cov=src --cov-report=term-missing --cov-fail-under=80 --cov-report=json
+
+      - name: Upload Coverage Report Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: ci_lab/coverage.json
+          if-no-files-found: error

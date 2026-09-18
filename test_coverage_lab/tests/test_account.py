@@ -79,6 +79,50 @@ def test_invalid_role_assignment():
         account.change_role("moderator")  # Invalid role should raise an error
 
 # ===========================
+# Test: Account Serialization
+# Author: Glen Testamark
+# Date: 2026-09-14
+# Description: Ensure accounts are serialized properly to a dictionary and fields match expected keys.
+# ===========================
+
+def test_to_dict():
+    acct = Account(name="Nas Jones", email="nas@ill.matic")
+    acct_dict = acct.to_dict()
+    expected_keys = {
+            "id",
+            "name",
+            "email",
+            "phone_number",
+            "disabled",
+            "date_joined",
+            "balance",
+            "role"
+    }
+    # Ensure acct_dict is a dict and the keys match and that test fails
+    # for an arbitrary incorrect set of keys 
+    assert isinstance(acct_dict, dict)
+    assert expected_keys == acct_dict.keys()
+    assert acct_dict["name"] == acct.name and acct_dict["email"] == acct.email
+
+# ===========================
+# Test: Account Missing Required Fields
+# Author: Glen Testamark
+# Date: 2026-09-14
+# Description: Ensure accounts contain the required name and email fields by
+# testing for DataValidationError on accounts without the required fields set.
+# ===========================
+
+def test_required_fields():
+    # Test default parameter, name only, and email only accounts.
+    with pytest.raises(DataValidationError):
+        Account().validate_required_fields()
+    with pytest.raises(DataValidationError):
+        Account(name="foo").validate_required_fields()
+    with pytest.raises(DataValidationError):
+        Account(email="bar@bar.binks").validate_required_fields()
+
+
+# ===========================
 # Test: Password Hashing
 # Author: Michael Podolsky
 # Date: 2026-09-09
@@ -144,7 +188,7 @@ def test_valid_withdrawal(setup_account):
 # ===========================
 
 def test_invalid_email_input():
-    """Test that invalid email formats are rejected"""""
+    """Test that invalid email formats are rejected"""
     invalid_emails = {
         "fakeemail",
         "noatsign.com",
@@ -155,6 +199,25 @@ def test_invalid_email_input():
         account = Account(name="Test User", email=bad_email)
         with pytest.raises(DataValidationError):
             account.validate_email()
+            
+# Test: Positive Account Deposit
+# Author: Ethan Guillem
+# Date: 2026-09-15
+# Description: Ensure a positive deposit increases the balance correctly.
+# ===========================
+
+def test_positive_deposit():
+    """Test that depositing a positive amount increases the balance."""
+    account = Account(
+        name="Ethan Guillem",
+        email="ethan@example.com",
+        balance=100.00,
+    )
+
+    account.deposit(50.00)
+
+    assert account.balance == 150.00
+
 
 ######################################################################
 #  T O D O   T E S T S  (To Be Completed by Students)
@@ -172,7 +235,7 @@ Each test should include:
 
 # Test Assignments
 
-# Student 1: Test account serialization
+# Student 1: Test account serialization -- DONE (Glen Testamark)
 # - Verify that the account object is correctly serialized to a dictionary.
 # - Ensure all expected fields are included in the output.
 # Target Method: to_dict()
@@ -181,13 +244,13 @@ Each test should include:
 # - Ensure invalid email formats raise a validation error.
 # Target Method: validate_email()
 
-# Student 3: Test missing required fields
+# Student 3: Test missing required fields -- DONE (Glen Testamark)
 # - Ensure a DataValidationError is raised when name or email is missing.
 # - Note: SQLAlchemy does not validate on construction, so Account() itself
 #   never raises. Call the validation method on the constructed object.
 # Target Method: validate_required_fields()
 
-# Student 4: Test positive deposit
+# Student 4: Test positive deposit -- DONE (Ethan Guillem)
 # - Verify that depositing a positive amount correctly increases the balance.
 # Target Method: deposit()
 
@@ -199,9 +262,25 @@ Each test should include:
 # - Verify that withdrawing a valid amount correctly decreases the balance.
 # Target Method: withdraw()
 
-# Student 7: Test withdrawal with insufficient funds
-# - Ensure withdrawal fails when balance is insufficient.
-# Target Method: withdraw()
+# ===========================
+# Test: Test withdrawal with insufficient funds
+# Author: Astrid Jimenez
+# Date: 2026-09-15
+# Description: Ensure withdrawal fails when balance is insufficient
+# ===========================
+
+def test_withdraw_insuff_funds():
+    """Test withdrawing more than the balance to raise DataValidationError and ensure balance is left unchanged."""
+    # Creating sample account
+    account = Account(name="Astrid Jimenez", email="jimena29@unv.nevada.edu", balance=50.0)
+
+    # Attempting to withdraw more than balance should raise
+    with pytest.raises(DataValidationError):
+        account.withdraw(100.0)
+
+    # Failed withdrawal must not alter current balance
+    assert account.balance == 50.0
+
 
 # Student 8: Test password hashing -- DONE (Michael Podolsky)
 # - Ensure passwords are properly hashed.
