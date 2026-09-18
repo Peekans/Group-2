@@ -108,3 +108,10 @@ class TestCounterEndpoints:
         assert result.status_code == status.HTTP_200_OK
         assert result.get_json() == {'message': 'All counters reset'}
         assert COUNTERS == {'alpha': 0, 'beta': 0}
+
+    def test_retrieve_nonexistent_counter(self, client):
+        """It should return 404 when retrieving a counter that does not exist"""
+        result = client.get('/counters/nonexistent')
+
+        assert result.status_code == status.HTTP_404_NOT_FOUND
+        assert result.get_json() == {'error' : 'Counter nonexistent does not exist'}
