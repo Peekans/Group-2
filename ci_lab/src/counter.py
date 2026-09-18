@@ -129,3 +129,4 @@ def get_counters_less_than_threshold(threshold):
     filtered_counters = {k: v for k, v in COUNTERS.items() if v < threshold}  # Only keep valid ones
     return jsonify(filtered_counters), status.HTTP_200_OK
 
+Fail
