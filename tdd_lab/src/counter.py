@@ -5,7 +5,7 @@ from flask import Flask, jsonify
 from . import status
 
 app = Flask(__name__)
-
+ 
 COUNTERS = {}
 
 def counter_exists(name):
@@ -62,3 +62,8 @@ def reset_all_counters():
     """Reset all counters to zero"""
     reset_counters()
     return jsonify({"message": "All counters reset"}), status.HTTP_200_OK
+
+@app.errorhandler(405)
+def method_not_allowed(error):
+    return jsonify({"error": "Method not allowed"}), status.HTTP_405_METHOD_NOT_ALLOWED
+

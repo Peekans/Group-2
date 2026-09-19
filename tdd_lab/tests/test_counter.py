@@ -115,3 +115,18 @@ class TestCounterEndpoints:
 
         assert result.status_code == status.HTTP_404_NOT_FOUND
         assert result.get_json() == {'error' : 'Counter nonexistent does not exist'}
+    
+    # ===========================
+    # Test: Handle Invalid HTTP Methods
+    # Author: Jonathan Johnson
+    # Date: 2026-09-18
+    # Description: Ensure HTTP code 405 is returned and error in data log.
+    # ===========================        
+    def test_handle_invalid_http_methods(self, client):
+        """It should return error 405 for unsupported HTTP methods"""
+        result = client.patch('/counters/foo')
+        assert result.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+        data = result.get_json()
+        assert data is not None
+        assert "error" in data
+        
